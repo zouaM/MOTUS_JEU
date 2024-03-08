@@ -1,4 +1,4 @@
-# MOTUS_JEU
+# MOTUS JEU
 
 # 1. Présentation de l'application
 
@@ -16,7 +16,7 @@ L'application MOTUS est un jeu inspiré du concept de Motus, où le joueur doit 
 Pour lancer l'application, une commande Docker Compose est utilisée :
 
 
-# sudo docker-compose up --build
+**sudo docker-compose up --build**
 
 
 L'architecture de l'application repose sur trois dossiers distincts, chacun correspondant à un microservice spécifique (MotusServeur, AuthServeur, et ScoreServeur). Chacun de ces dossiers contient un Dockerfile qui configure l'environnement d'exécution du serveur associé. Le fichier docker-compose.yml centralise la configuration et permet de démarrer simultanément les trois serveurs.
@@ -26,8 +26,12 @@ Interaction avec l'application
 
 Après le lancement des serveurs, accédez à l'application via un navigateur en visitant localhost:3000, qui correspond au serveur Motus. Si l'utilisateur n'est pas déjà connecté, une redirection automatique vers le serveur d'authentification (localhost:4000) se produit. Une interface de connexion s'affichera, invitant l'utilisateur à s'identifier avec ses identifiants.
 
-Avec pour identifiant pour le prof: simon mdp: simon
 
+Avec pour identifiant pour le prof: 
+```diff
+-   Identifiant: simon
+-   Mdp: simon
+```
 
 Une fois authentifié, l'utilisateur est redirigé vers le serveur Motus où il peut entrer ses tentatives pour deviner le mot du jour. Le système vérifie si les identifiants saisis correspondent à un utilisateur existant dans une base de données JSON. En cas de succès, le score de l'utilisateur est incrémenté sur le serveur Score.
 
