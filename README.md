@@ -42,13 +42,17 @@ Note importante : La saisie du mot se fait lettre par lettre dans des cases déd
 
 # 3. Diagramme de séquence
 
+
 ![](sequence.jpeg)
 
 
 
 
 
-# 4. Étapes suivantes
 
+
+
+
+# 4. Étapes suivantes
 
 Les étapes futures consisteront à perfectionner l'interface du jeu afin de permettre une transition automatique d'une case à la suivante lors de la saisie des lettres du mot, améliorant ainsi l'expérience utilisateur.
