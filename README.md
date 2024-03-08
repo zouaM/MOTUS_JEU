@@ -38,9 +38,7 @@ Note importante : La saisie du mot se fait lettre par lettre dans des cases déd
 
 #3. Diagramme
 
-
-
-    ![alt text](https://github.com/zouaM/MOTUS_JEU/blob/main/sequence.jpeg)
+![](sequence.jpeg)
 
 
 
