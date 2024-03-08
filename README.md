@@ -40,7 +40,7 @@ Note importante : La saisie du mot se fait lettre par lettre dans des cases déd
 
 
 
-    ![alt text](sequence.jpeg)
+    ![alt text](https://github.com/zouaM/MOTUS_JEU/blob/main/sequence.jpeg)
 
 
 
