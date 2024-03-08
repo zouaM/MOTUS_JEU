@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOTUS</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css"
+    />
+
+    <!-- Custom styles -->
+    <style>
+      body {
+        background-color: #007bff; /* Un bleu légèrement plus foncé pour un meilleur contraste */
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Police plus moderne */
+        color: #ffffff; /* Texte en blanc pour un meilleur contraste */
+        margin: 0;
+        padding-top: 20px;
+      }
+
+      #global {
+        max-width: 80%; /* Ajustement pour mieux s'adapter à différents écrans */
+        margin: auto;
+        background-color: #022c43; /* Fond plus foncé pour les éléments conteneurs */
+        padding: 20px;
+        border-radius: 8px; /* Bordures arrondies pour un look moderne */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
+      }
+
+      .letter-input {
+        text-transform: uppercase;
+        margin: 0 5px; /* Ajustement de la marge pour un espacement uniforme */
+        text-align: center;
+        border-radius: 4px; /* Bordures arrondies pour les champs de saisie */
+      }
+
+      .btn-success {
+        margin-top: 10px; /* Espacement supplémentaire au-dessus du bouton */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="global" class="container">
+      <header class="text-center mb-4">
+        <h1>MOTUS</h1>
+      </header>
+      <main>
+        <div id="formulaire" class="text-center mb-4"></div>
+        <div id="sutom" class="text-center"></div>
+        <div class="text-center">
+            <a href="http://localhost:5000/getScore" id="score" target="blank" class="btn btn-primary mt-3">SCORE</a>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts -->
+    <script>
+      var mot = "";
+      var taille;
+      var proposition = "";
+      var essais = 0;
+
+      $.get("/mot", function (data) {
+        mot = data.trim().toUpperCase();
+        taille = mot.length;
+        console.log(mot);
+        console.log(taille);
+        formulaire(taille);
+      });
+
+      function formulaire(x) {
+        var form = $("<form></form>").addClass(
+          "form-inline justify-content-center"
+        );
+        for (var j = 0; j < x; j++) {
+          $("<input>", {
+            type: "text",
+            id: "letter" + j,
+            class: "form-control letter-input",
+            maxlength: "1",
+            onkeyup: "moveOnMax(this)",
+          }).appendTo(form);
+        }
+        $("<button>", {
+          type: "submit",
+          class: "btn btn-success",
+          text: "Envoyer",
+        }).appendTo(form);
+        $("#formulaire").html(form);
+
+        form.on("submit", function (e) {
+          e.preventDefault();
+          proposition = "";
+          for (var i = 0; i < taille; i++) {
+            var inputVal = $("#letter" + i)
+              .val()
+              .toUpperCase();
+            proposition += inputVal;
+          }
+          generate_table(proposition);
+        });
+      }
+
+      function generate_table(prop) {
+        var isCorrect = true; // On suppose d'abord que la proposition est correcte
+
+        if (prop.length != mot.length) {
+          alert("incorrect word length");
+          isCorrect = false; // La proposition n'est pas de la bonne longueur
+        } else {
+          var tbl = $("<table></table>").addClass("table table-bordered");
+          var tblbody = $("<tbody></tbody>");
+          var row = $("<tr></tr>");
+
+          for (var j = 0; j < taille; j++) {
+            var cell = $("<td></td>").text(prop[j]);
+            if (prop[j] == mot[j]) {
+              cell.css("background-color", "green");
+            } else if (mot.includes(prop[j])) {
+              cell.css("background-color", "orange");
+              isCorrect = false; // Au moins un caractère est mal placé
+            } else {
+              cell.css("background-color", "red");
+              isCorrect = false; // Au moins un caractère est incorrect
+            }
+            row.append(cell);
+          }
+
+          essais += 1;
+          tblbody.append(row);
+          tbl.append(tblbody);
+          $("#sutom").append(tbl);
+        }
+
+        // Appeler l'API pour mettre à jour le score uniquement si la proposition est correcte
+        if (isCorrect) {
+          $.get("/sendUser", function (data) {
+            if (data.username) {
+              const url = `http://localhost:5000/setScore/?username=${data.username}&score=2`;
+
+              fetch(url)
+                .then((response) => response.text())
+                .then((data) => console.log(data))
+                .catch((error) => console.error("Error setting score:", error));
+            } else {
+              console.log("Username not found in the response");
+            }
+          });
+        }
+      }
+
+      function moveOnMax(s) {
+        if (s.value.length >= s.maxLength) {
+          $(s).next(".letter-input").focus();
+        }
+      }
+
+      // Ajouter un écouteur d'événement au bouton
+      document
+        .getElementById("get-user-score")
+        .addEventListener("click", getUserScore);
+
+      getUserScore = () => {
+        $.get("/sendUser", function (data) {
+          if (data.username) {
+            // Nom d'utilisateur récupéré avec succès
+            // Rediriger vers score.html avec le nom d'utilisateur en tant que paramètre d'URL
+            window.location.href =
+              "score.html?username=" + encodeURIComponent(data.username);
+          } else {
+            console.log("Username not found in the response");
+          }
+        }).fail(function () {
+          console.log("Failed to get the username");
+        });
+      };
+    </script>
+  </body>
+</html>

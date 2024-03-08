@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  auth:
+    build:
+      context: ./AuthServer
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    networks:
+      - motusnet
+
+  serveurmotus:
+    build:
+      context: ./MotusServeur
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - motusnet
+    depends_on:
+      - auth
+      - score
+
+  score:
+    build:
+      context: ./ScoreServeur
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - motusnet
+
+networks:
+  motusnet:
+    driver: bridge

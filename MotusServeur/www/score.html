@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="/css/normalize.css">
+    <!-- Milligram CSS -->
+    <link rel="stylesheet" href="/css/milligram.css">
+    
+    <!-- Jquery -->
+    <script src="/jquery-3.6.0.js"></script>
+</head>
+<body style="font-size:45px">
+    <div class="container">
+        <div class="row">
+            <div class="column"><h1>My Motus App</h1></div>
+        </div>
+
+        <div>
+            <table>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Score Total</th>
+                    <th>Moyenne d'essais</th>
+                </tr>
+                <tr>
+                    <td id="username">
+                        <!-- Le nom d'utilisateur sera inséré ici -->
+                    </td>
+                    <td id="score">
+                        <!-- Le score sera inséré ici -->
+                    </td>
+                    <td id="essais">
+                        <!-- La moyenne d'essais sera insérée ici -->
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function() {
+        // Fonction pour récupérer les paramètres de l'URL
+        function getQueryStringValue (key) {  
+            return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+        }  
+
+        // Récupérer le nom d'utilisateur de l'URL
+        const username = getQueryStringValue('username');
+
+        if(username) {
+            const apiUrl = "http://localhost:5000/getScoreByUsername/" + username;
+            
+            // Appel AJAX pour obtenir le score par nom d'utilisateur
+            $.get(apiUrl, function(response) {
+                // Assurez-vous que votre API renvoie un objet JSON avec 'score' et 'averageAttempts'
+                $("#username").text(username); // Mettre à jour le nom d'utilisateur
+                $("#score").text(response.score); // Mettre à jour le score
+                $("#essais").text(response.averageAttempts); // Mettre à jour la moyenne d'essais
+            }).fail(function() {
+                console.log("Erreur lors de la récupération des données");
+            });
+        } else {
+            console.log("Nom d'utilisateur non spécifié dans l'URL");
+        }
+    });
+</script>
+</html>
